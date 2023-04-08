@@ -50,16 +50,20 @@ async def _command(ctx, arg1, arg2, arg3, arg4, arg5):
   driver_2 = arg5
   await ctx.send("{},{},{},{},{}".format(year, track, session_time, driver_1,
                                          driver_2))
+  progress_bar = await ctx.send('=>...............')
   session = ff1.get_session(int(arg1), str(arg2), str(arg3))
+  await progress_bar.edit(content = '===>.............')
   session.load()
+  await progress_bar.edit(content = '======>..........')
   laps_driver_1 = session.laps.pick_driver(str(arg4))
   laps_driver_2 = session.laps.pick_driver(str(arg5))
-
+  await progress_bar.edit(content = '=========>.......')
   fastest_driver_1 = laps_driver_1.pick_fastest()
   fastest_driver_2 = laps_driver_2.pick_fastest()
-
+  await progress_bar.edit(content = '============>...')
   telemetry_driver_1 = fastest_driver_1.get_telemetry()
   telemetry_driver_2 = fastest_driver_2.get_telemetry()
+  await progress_bar.edit(content = '=============>..')
   delta_time, ref_tel, compare_tel = ff1.utils.delta_time(
     fastest_driver_1, fastest_driver_2)
   team_driver_1 = laps_driver_1['Team'].iloc[0]
@@ -68,6 +72,7 @@ async def _command(ctx, arg1, arg2, arg3, arg4, arg5):
   color_2 = ff1.plotting.team_color(team_driver_2)
   if color_1 == color_2:
     color_2='#ffffff'
+  await progress_bar.edit(content = '================> Done!')  
   await ctx.send (str(driver_1)+':'+str(fastest_driver_1['LapTime'])[11:19])
   await ctx.send (str(driver_2)+':'+str(fastest_driver_2['LapTime'])[11:19])
   
